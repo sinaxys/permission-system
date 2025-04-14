@@ -1,5 +1,5 @@
 module PermissionSystem
-  class Profile < ApplicationRecord
+  class Profile < PermissionSystem::ApplicationRecord
     self.table_name = 'permission_system_profiles'
 
     has_many :roles, dependent: :destroy

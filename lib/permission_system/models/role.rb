@@ -1,5 +1,5 @@
 module PermissionSystem
-  class Role < ApplicationRecord
+  class Role < PermissionSystem::ApplicationRecord
     self.table_name = 'permission_system_roles'
 
     belongs_to :profile

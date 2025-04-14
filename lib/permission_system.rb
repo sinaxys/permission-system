@@ -1,5 +1,6 @@
 require "permission_system/version"
 require "permission_system/engine"
+require "permission_system/application_record"
 require "permission_system/concerns/has_permissions"
 require "permission_system/models/profile"
 require "permission_system/models/role"

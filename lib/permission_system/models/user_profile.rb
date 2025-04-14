@@ -1,5 +1,5 @@
 module PermissionSystem
-  class UserProfile < ApplicationRecord
+  class UserProfile < PermissionSystem::ApplicationRecord
     self.table_name = 'permission_system_user_profiles'
 
     belongs_to :user, polymorphic: true
