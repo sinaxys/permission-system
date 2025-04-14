@@ -1,6 +1,8 @@
+require_relative "lib/permission_system/version"
+
 Gem::Specification.new do |spec|
   spec.name = "permission_system"
-  spec.version = "0.1.0"
+  spec.version = PermissionSystem::VERSION
   spec.authors = ["Andre Moreira"]
   spec.email = ["andre.torres@sinaxys.com"]
 
@@ -14,7 +16,14 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/andre-dan/permission_system"
   spec.metadata["changelog_uri"] = "https://github.com/andre-dan/permission_system/blob/main/CHANGELOG.md"
 
-  spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  spec.files = Dir[
+    "lib/**/*",
+    "db/**/*",
+    "config/**/*",
+    "MIT-LICENSE",
+    "Rakefile",
+    "README.md"
+  ]
 
   spec.add_dependency "rails", ">= 6.1"
   spec.add_development_dependency "rspec-rails"
