@@ -1,0 +1,42 @@
+<div class="row mb-4">
+  <div class="col">
+    <h2>Perfis</h2>
+  </div>
+  <div class="col text-end">
+    <%= link_to 'Novo Perfil', new_profile_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Admin?</th>
+          <th>Status</th>
+          <th>Permissões</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @profiles.each do |profile| %>
+          <tr>
+            <td><%= profile.name %></td>
+            <td><%= profile.admin? ? 'Sim' : 'Não' %></td>
+            <td><%= profile.active? ? 'Ativo' : 'Inativo' %></td>
+            <td><%= profile.roles.count %></td>
+            <td>
+              <%= link_to 'Editar', edit_profile_path(profile), class: 'btn btn-sm btn-outline-primary' %>
+              <%= link_to 'Excluir', 
+                          profile_path(profile), 
+                          method: :delete,
+                          data: { confirm: 'Tem certeza?' },
+                          class: 'btn btn-sm btn-outline-danger' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div> 
