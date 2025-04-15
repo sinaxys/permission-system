@@ -55,14 +55,14 @@
         <tbody>
           <% @controllers.each do |controller| %>
             <tr>
-              <td class="permission-group"><%= controller.humanize %></td>
+              <td class="permission-group"><%= controller[:display_name] %></td>
               <% @permissions.each do |permission| %>
                 <td>
                   <div class="form-check">
-                    <%= check_box_tag "permissions[#{controller}][#{permission}]",
-                                    "1",
-                                    @current_permissions&.include?([controller, permission.to_s]),
-                                    class: 'form-check-input' %>
+                    <%= check_box_tag "permissions[#{controller[:controller]}][#{permission}]",
+                "1",
+                @current_permissions&.include?([controller[:controller], permission.to_s]),
+                class: 'form-check-input' %>
                   </div>
                 </td>
               <% end %>
