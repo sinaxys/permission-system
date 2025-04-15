@@ -14,16 +14,17 @@ module PermissionSystem
 
     def has_permission?(controller, action)
       return true if admin?
-      
-      profiles.joins(:roles)
-             .where(permission_system_roles: {
-               controller: controller,
-               permission: action
-             }).exists?
+    
+      profiles_with_roles = profiles.joins(:roles)
+                                    .where(permission_system_roles: { controller: controller })
+    
+      profiles_with_roles.any? do |profile|
+        profile.roles.any? { |role| role.permission.include?(action) }
+      end
     end
 
     def admin?
       profiles.where(admin: true).exists?
     end
   end
-end 
+end

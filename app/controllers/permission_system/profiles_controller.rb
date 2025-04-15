@@ -59,21 +59,55 @@ module PermissionSystem
     end
 
     def create_roles
-      params[:permissions].each do |controller, actions|
-        actions.each do |action, value|
-          next unless value == "1"
-          @profile.roles.create!(controller: controller, permission: action)
+      ActiveRecord::Base.transaction do
+        params[:permissions].each do |controller, actions|
+          permitted_actions = actions.select { |_action, value| value == "1" }.keys
+          next if permitted_actions.empty?
+    
+          @profile.roles.create!(controller: controller, permission: permitted_actions)
         end
       end
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:error] = "Erro ao criar roles: #{e.message}"
+      raise ActiveRecord::Rollback
     end
 
     def load_controllers
-      Rails.application.routes.routes.map do |route|
-        route.defaults[:controller]
-      end.compact.uniq.reject { |c| c.start_with?('rails/') }.sort
+      yaml_path = Rails.root.join('config', 'permission_controllers.yml')
+      if File.exist?(yaml_path) && (config = YAML.load_file(yaml_path)) && config['controllers']
+        config['controllers'].map do |controller_name, controller_config|
+          if controller_config.is_a?(Hash) && controller_config['name']
+            { controller: controller_name, display_name: controller_config['name'] }
+          else
+            { controller: controller_name, display_name: controller_name.humanize }
+          end
+        end
+      else
+        Rails.application.routes.routes.map do |route|
+          controller = route.defaults[:controller]
+          { controller: controller, display_name: controller.humanize } if controller
+        end.compact.uniq.reject { |c| c[:controller].start_with?('rails/') }.sort_by { |c| c[:controller] }
+      end
     end
+    
 
     def load_permissions
+      yaml_path = Rails.root.join('config', 'permission_controllers.yml')
+      if File.exist?(yaml_path) && (config = YAML.load_file(yaml_path)) && config['controllers']
+        if params[:controller_filter].present? && config['controllers'][params[:controller_filter]]
+          return config['controllers'][params[:controller_filter]]['permissions'].map(&:to_sym)
+        end
+        
+        all_permissions = []
+        config['controllers'].each do |_, controller_config|
+          if controller_config.is_a?(Hash) && controller_config['permissions']
+            all_permissions += controller_config['permissions']
+          end
+        end
+        
+        return all_permissions.uniq.map(&:to_sym).sort unless all_permissions.empty?
+      end
+      
       [:index, :show, :new, :create, :edit, :update, :destroy]
     end
   end
