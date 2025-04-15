@@ -1,0 +1,7 @@
+controllers:
+  dashhboards:
+    name: "Dashboard"
+    permissions: [show] 
+  exchanges:
+    name: "Transações"
+    permissions: [index, show, update, destroy]
