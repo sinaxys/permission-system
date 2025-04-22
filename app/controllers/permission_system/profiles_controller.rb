@@ -59,12 +59,17 @@ module PermissionSystem
     end
 
     def create_roles
-      params[:permissions].each do |controller, actions|
-        actions.each do |action, value|
-          next unless value == "1"
-          @profile.roles.create!(controller: controller, permission: action)
+      ActiveRecord::Base.transaction do
+        params[:permissions].each do |controller, actions|
+          permitted_actions = actions.select { |_action, value| value == "1" }.keys
+          next if permitted_actions.empty?
+    
+          @profile.roles.create!(controller: controller, permission: permitted_actions)
         end
       end
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:error] = "Erro ao criar roles: #{e.message}"
+      raise ActiveRecord::Rollback
     end
 
     def load_controllers
