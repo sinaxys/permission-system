@@ -13,8 +13,8 @@ module PermissionSystem
     end
 
     def has_permission?(controller, action)
-      return true if admin?
-    
+      #TODO: if necessary check in the gem if admin, remove comment
+      #return true if admin?
       profiles_with_roles = profiles.joins(:roles)
                                     .where(permission_system_roles: { controller: controller })
     
